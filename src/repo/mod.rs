@@ -1,13 +1,13 @@
-use hyper::Error;
 use serde_json::Value;
-use super::client;
+use super::{user, client};
+use super::error::Error;
 
 // https://api.github.com/repos/google/gops
-pub fn get(full_name: String) -> Result<Value, Error> {
+pub fn get(user_info: user::UserInfo) -> Result<Value, Error> {
 
     let mut url = String::from("https://api.github.com/repos/");
 
-    url.push_str(&full_name);
+    url.push_str(&user_info.get_full_name());
 
-    Ok(client::get(url)?)
+    Ok(client::get(&url)?.to_json()?)
 }

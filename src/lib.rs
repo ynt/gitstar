@@ -4,15 +4,13 @@ pub mod user;
 
 pub mod repo;
 
+pub mod util;
+pub mod error;
 
-extern crate futures;
-extern crate hyper;
-extern crate tokio_core;
+extern crate reqwest;
 
-extern crate serde;
 extern crate serde_json;
 
-// #[macro_use]
-// extern crate serde_derive;
-
-extern crate hyper_tls;
+#[macro_use]
+extern crate log;
+extern crate env_logger;

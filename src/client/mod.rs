@@ -1,32 +1,37 @@
+use reqwest;
 use std::io;
-use tokio_core::reactor::Core;
-
-use futures::{Future, Stream};
-use hyper::{Client, Method, Request, Error};
-use hyper_tls::HttpsConnector;
-use hyper::header::UserAgent;
-
 use serde_json;
 use serde_json::Value;
 
+use super::error::Error;
 
-pub fn get(url: String) -> Result<Value, Error> {
-    let mut core = Core::new()?;
-    let handle = core.handle();
+pub struct Response {
+    pub body: String,
+}
 
-    let client = Client::configure()
-        .connector(HttpsConnector::new(4, &handle).expect("http tls error."))
-        .build(&handle);
+impl Response {
+    pub fn to_json(&self) -> Result<Value, Error> {
+        let v: Value = serde_json::from_slice(self.body.as_bytes()).map_err(|e| {
+            io::Error::new(io::ErrorKind::Other, e)
+        })?;
+        Ok(v)
+    }
+}
 
-    let mut req: Request = Request::new(Method::Get, url.parse()?);
-    req.headers_mut().set(UserAgent::new("User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36"));
+pub fn get(url: &str) -> Result<Response, Error> {
+    let target = reqwest::Url::parse("http://192.168.1.102:8001")?;
+    let client = reqwest::Client::builder()
+        .proxy(reqwest::Proxy::custom(
+            move |url| if url.host_str() != Some("hyper.rs") {
+                Some(target.clone())
+            } else {
+                None
+            },
+        ))
+        .build()?;
 
-    let work = client.request(req).and_then(|res| res.body().concat2());
+    info!("fetch url: {}", url);
+    let mut resp = client.get(url).send()?;
 
-    let res = core.run(work)?;
-    let v: Value = serde_json::from_slice(&res).map_err(|e| {
-        io::Error::new(io::ErrorKind::Other, e)
-    })?;
-
-    Ok(v)
+    Ok(Response { body: resp.text()? })
 }
