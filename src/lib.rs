@@ -1,10 +1,11 @@
 pub mod client;
 
-pub mod user;
+pub mod page;
 
 pub mod repo;
 
 pub mod util;
+
 pub mod error;
 
 extern crate reqwest;
