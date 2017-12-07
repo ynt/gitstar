@@ -19,7 +19,7 @@ impl Response {
 }
 
 pub fn get(url: &str) -> Result<Response, Error> {
-    let target = reqwest::Url::parse("http://192.168.1.102:8001")?;
+    let target = reqwest::Url::parse("http://127.0.0.1:8001")?;
     let client = reqwest::Client::builder()
         .proxy(reqwest::Proxy::custom(
             move |url| if url.host_str() != Some("hyper.rs") {

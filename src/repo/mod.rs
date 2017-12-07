@@ -7,14 +7,17 @@ pub struct BaseInfo {
     pub id: i64,
     pub repo_name: String,
     pub username: String,
+    pub language: String,
 }
 
 impl BaseInfo {
-    pub fn new(id: i64, repo_name: String, username: String) -> Self {
+    pub fn new(id: i64, repo_name: String, username: String, language: String) -> Self {
         BaseInfo {
             id: id,
             repo_name: repo_name.to_lowercase(),
             username: username.to_lowercase(),
+            language: language.to_lowercase(),
+            ..Default::default()
         }
     }
 
@@ -29,7 +32,7 @@ impl BaseInfo {
         url.push_str(&self.repo_name);
         url.push_str("/repos");
 
-        Ok(Page::new(&url, 30))
+        Ok(Page::new(&url, 100))
     }
 
     // https://api.github.com/repos/google/gops
@@ -38,7 +41,25 @@ impl BaseInfo {
 
         url.push_str(&self.get_full_name()?);
 
-        Ok(Page::new(&url, 30))
+        Ok(Page::new(&url, 100))
+    }
+
+    // https://api.github.com/search/repositories?q=language:go&sort=stars&order=desc
+    pub fn get_repo_by_search(&self) -> Result<Page, Error> {
+        if self.language.is_empty() {
+            return Err(Error::new("BaseInfo feild language is empty".to_owned()));
+        }
+
+        let mut url = String::from("https://api.github.com/search/repositories?q=language:");
+
+        url.push_str(&self.language);
+
+        url.push_str("&sort=stars&order=desc");
+
+        let mut page = Page::new(&url, 100);
+        page.get_items = true;
+
+        Ok(page)
     }
 
     pub fn get_full_name(&self) -> Result<String, Error> {
@@ -55,7 +76,7 @@ impl BaseInfo {
 #[derive(Debug)]
 #[derive(Default)]
 pub struct RepoInfo {
-    pub user_info: BaseInfo,
+    pub base_info: BaseInfo,
     pub owner: Owner,
 
     pub private: bool,

@@ -11,6 +11,7 @@ pub struct Page {
     pub page: i64,
     pub page_size: i64,
     pub url: String,
+    pub get_items: bool,
 
     scrapy_once: bool,
     first_get: bool,
@@ -54,10 +55,17 @@ impl Page {
         // if have next page, set page number.
         let mut url = self.url.clone();
         if self.page > 1 {
-            url.push_str("?page=");
-            url.push_str(&self.page.to_string());
+            if self.get_items {
+                url.push_str("&page=");
+                url.push_str(&self.page.to_string());
+            } else {
+                url.push_str("?page=");
+                url.push_str(&self.page.to_string());
+            }
+            url.push_str("&per_page=100");
         } else {
             self.page = 1;
+            url.push_str("?per_page=100");
         }
         self.page = self.page + 1;
 
@@ -72,7 +80,13 @@ impl Page {
                 user_repo.push(create_repo_info(res));
             }
         } else if result.is_object() {
-            user_repo.push(create_repo_info(&result));
+            if self.get_items {
+                for res in result["items"].as_array().unwrap() {
+                    user_repo.push(create_repo_info(res));
+                }
+            } else {
+                user_repo.push(create_repo_info(&result));
+            }
         }
 
         // Set current page size
@@ -85,14 +99,15 @@ impl Page {
 
 // Create RepoInfo by serde_json::Value
 fn create_repo_info(res: &Value) -> RepoInfo {
-    let user_info = BaseInfo {
+    let base_info = BaseInfo {
         id: get_option_i64(res["id"].as_i64()),
         repo_name: get_option_string(res["name"].as_str()),
         username: get_option_string(res["owner"]["login"].as_str()),
+        language: get_option_string(res["language"].as_str()),
     };
 
     let owner = Owner {
-        login: user_info.username.clone(),
+        login: base_info.username.clone(),
         id: get_option_i64(res["owner"]["id"].as_i64()),
         avatar_url: get_option_string(res["owner"]["avatar_url"].as_str()),
         gravatar_id: get_option_string(res["owner"]["gravatar_id"].as_str()),
@@ -119,7 +134,7 @@ fn create_repo_info(res: &Value) -> RepoInfo {
     };
 
     RepoInfo {
-        user_info: user_info,
+        base_info: base_info,
         owner: owner,
         license: license,
 
