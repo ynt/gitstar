@@ -1,4 +1,5 @@
 extern crate gitstar;
+extern crate regex;
 
 #[macro_use]
 extern crate log;
@@ -7,11 +8,52 @@ extern crate env_logger;
 extern crate scron;
 extern crate chrono;
 
-// use gitstar::*;
+use gitstar::prelude::*;
 use gitstar::repo::BaseInfo;
+// use std::thread;
+// use std::sync::mpsc;
 
 fn main() {
-    get_data();
+    env_logger::init().unwrap();
+
+    let _url1 = "https://api.github.com/repos/google/gops";
+    let _url2 = "https://api.github.com/search/repositories?q=language:go&sort=stars&order=desc";
+
+    let mut _page = Page2::new(_url2, 0, 100, true);
+
+    // while !_page.is_end() {
+    // _page.fetch();
+    // println!("{:?}", _page.fetch());
+    println!("{:?}", _page.get_url_list());
+    // }
+
+
+
+    // println!("{:?}", res.unwrap().to_json());
+    // let (tx, rx) = mpsc::channel();
+
+    // thread::spawn(move || {
+    //     let val = String::from("hi");
+    //     tx.send(val).unwrap();
+    // });
+
+    // thread::spawn(move || {
+    //     let received = rx.recv().unwrap();
+    //     println!("Got: {}", received);
+    // });
+
+
+    // let handle1 = thread::spawn(|| for i in 1..20 {
+    //     println!("{:?}", i);
+    // });
+
+    // let handle2 = thread::spawn(|| for i in 20..30 {
+    //     println!("{:?}", i);
+    // });
+    // handle1.join().unwrap();
+
+    // handle2.join().unwrap();
+    // get_data();
     // use scron::Schedule;
     // use chrono::Utc;
     // use std::str::FromStr;

@@ -5,6 +5,8 @@ pub mod page;
 
 pub mod repo;
 
+pub mod prelude;
+
 // db
 pub mod models;
 
@@ -28,3 +30,7 @@ extern crate diesel;
 
 #[macro_use]
 extern crate diesel_infer_schema;
+
+extern crate url;
+
+extern crate regex;

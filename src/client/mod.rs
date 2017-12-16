@@ -1,4 +1,5 @@
 use reqwest;
+use reqwest::header::Headers;
 use std::io;
 use serde_json;
 use serde_json::Value;
@@ -7,6 +8,7 @@ use super::error::Error;
 
 pub struct Response {
     pub body: String,
+    pub header: Headers,
 }
 
 impl Response {
@@ -33,5 +35,10 @@ pub fn get(url: &str) -> Result<Response, Error> {
     info!("fetch url: {}", url);
     let mut resp = client.get(url).send()?;
 
-    Ok(Response { body: resp.text()? })
+    let header = resp.headers().clone();
+
+    Ok(Response {
+        body: resp.text()?,
+        header: header,
+    })
 }

@@ -1,12 +1,15 @@
+use std::str;
 use serde_json::Value;
+use url::Url;
+use regex::Regex;
+use std::str::FromStr;
 
 use super::client;
 use super::repo::*;
 use super::util::*;
 use super::error::Error;
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Debug, Default)]
 pub struct Page {
     pub page: i64,
     pub page_size: i64,
@@ -70,7 +73,17 @@ impl Page {
         self.page = self.page + 1;
 
         // Send a get request, get serde_json::Value object/array
-        let result = client::get(&url)?.to_json()?;
+        let res = client::get(&url)?;
+        let result = res.to_json()?;
+
+        let header = res.header;
+        if let Some(raw_link) = header.get_raw("Link") {
+            let links = str::from_utf8(raw_link.one().unwrap()).unwrap();
+
+            let link: Vec<&str> = links.split(",").collect();
+
+            println!("{:?}", link);
+        }
 
         let mut user_repo: Vec<RepoInfo> = Default::default();
 
@@ -93,6 +106,159 @@ impl Page {
         self.current_page_size = user_repo.len() as i64;
 
         // Return a Vec<RepoInfo>
+        Ok(user_repo)
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct Page2<'a> {
+    url: &'a str,
+    page_size: u64,
+    page: u64,
+    get_items: bool,
+    first_fetch: bool,
+    max_page: u64,
+    is_end: bool,
+}
+
+impl<'a> Page2<'a> {
+    pub fn new(url: &'a str, mut page: u64, page_size: u64, get_items: bool) -> Self {
+        if page == 0 {
+            page = 1;
+        }
+
+        Page2 {
+            url: url,
+            page: page,
+            page_size: page_size,
+            first_fetch: true,
+            get_items: get_items,
+
+            ..Default::default()
+        }
+    }
+
+    pub fn get(&mut self, url: &str) -> Result<Vec<RepoInfo>, Error> {
+        Ok(self.analyze_result(url)?)
+    }
+
+    pub fn get_url_list(&mut self) -> Vec<String> {
+        if self.first_fetch {
+            let url = self.get_next_url();
+            let _ = self.analyze_result(&url);
+        }
+
+        let url = Url::parse(self.url).unwrap();
+        let mut list: Vec<String> = Default::default();
+        if self.max_page <= 1 {
+            list.push(self.url.to_owned());
+        } else {
+            for pat in 1..self.max_page + 1 {
+                let mut u = url.clone();
+                u.query_pairs_mut().append_pair("page", &pat.to_string());
+                u.query_pairs_mut().append_pair(
+                    "per_page",
+                    &self.page_size.to_string(),
+                );
+                list.push(u.as_str().to_string())
+            }
+        }
+
+        list
+    }
+
+    pub fn get_next_url(&mut self) -> String {
+        if self.first_fetch {
+            // self.url.to_owned()
+            self.splice_url()
+        } else {
+            if self.page_size != 0 {
+                if self.page >= self.max_page {
+                    self.is_end = true;
+                    self.url.to_owned()
+                } else {
+                    self.page += 1;
+                    self.splice_url()
+                }
+            } else {
+                self.is_end = true;
+                self.url.to_owned()
+            }
+        }
+    }
+
+    pub fn is_end(&self) -> bool {
+        self.is_end
+    }
+
+    pub fn fetch(&mut self) -> Result<Vec<RepoInfo>, Error> {
+        let url = self.get_next_url();
+
+        Ok(self.analyze_result(&url)?)
+    }
+
+    fn splice_url(&mut self) -> String {
+        let mut url = Url::parse(self.url).unwrap();
+
+        if self.page > 1 {
+            url.query_pairs_mut().append_pair(
+                "page",
+                &self.page.to_string(),
+            );
+        }
+
+        if self.page_size != 0 {
+            url.query_pairs_mut().append_pair(
+                "per_page",
+                &self.page_size.to_string(),
+            );
+        }
+
+        url.into_string()
+    }
+
+    fn analyze_result(&mut self, url: &str) -> Result<Vec<RepoInfo>, Error> {
+        info!("fetch url: {}", url);
+
+        // Send a get request, get serde_json::Value object/array
+        let res = client::get(&url)?;
+        let result = res.to_json()?;
+        if self.first_fetch {
+            let header = &res.header;
+            if let Some(raw_link) = header.get_raw("Link") {
+                let links = str::from_utf8(raw_link.one().expect("1")).expect("2");
+
+                let re = Regex::new(r#"page=(?P<max_page>\d+)>; rel="last""#).expect("3");
+
+                let caps = re.captures(links).unwrap();
+
+                self.max_page = FromStr::from_str(&caps["max_page"]).unwrap();
+            } else {
+                self.max_page = 1;
+            }
+
+            if self.page >= self.max_page {
+                self.is_end = true;
+            }
+
+            self.first_fetch = false;
+        }
+        let mut user_repo: Vec<RepoInfo> = Default::default();
+
+        // if result is a array
+        if result.is_array() {
+            for res in result.as_array().unwrap() {
+                user_repo.push(create_repo_info(res));
+            }
+        } else if result.is_object() {
+            if self.get_items {
+                for res in result["items"].as_array().unwrap() {
+                    user_repo.push(create_repo_info(res));
+                }
+            } else {
+                user_repo.push(create_repo_info(&result));
+            }
+        }
         Ok(user_repo)
     }
 }
