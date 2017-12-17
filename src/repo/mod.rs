@@ -1,8 +1,7 @@
 use super::error::Error;
 use super::page::Page;
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct BaseInfo {
     pub id: i64,
     pub repo_name: String,
@@ -73,8 +72,7 @@ impl BaseInfo {
     }
 }
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct RepoInfo {
     pub base_info: BaseInfo,
     pub owner: Owner,
@@ -113,8 +111,7 @@ pub struct RepoInfo {
     pub default_branch: String,
 }
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct License {
     pub key: String,
     pub name: String,
@@ -122,8 +119,7 @@ pub struct License {
     pub url: String,
 }
 
-#[derive(Debug)]
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Owner {
     pub login: String,
     pub id: i64,

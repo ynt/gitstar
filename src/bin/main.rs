@@ -13,60 +13,21 @@ use gitstar::repo::BaseInfo;
 // use std::thread;
 // use std::sync::mpsc;
 
-fn main() {
+fn main() {}
+
+pub fn get_data2() {
     env_logger::init().unwrap();
 
     let _url1 = "https://api.github.com/repos/google/gops";
     let _url2 = "https://api.github.com/search/repositories?q=language:go&sort=stars&order=desc";
 
-    let mut _page = Page2::new(_url2, 0, 100, true);
+    let mut _page = Page2::new(_url1, 0, 0, false);
 
     // while !_page.is_end() {
     // _page.fetch();
     // println!("{:?}", _page.fetch());
     println!("{:?}", _page.get_url_list());
     // }
-
-
-
-    // println!("{:?}", res.unwrap().to_json());
-    // let (tx, rx) = mpsc::channel();
-
-    // thread::spawn(move || {
-    //     let val = String::from("hi");
-    //     tx.send(val).unwrap();
-    // });
-
-    // thread::spawn(move || {
-    //     let received = rx.recv().unwrap();
-    //     println!("Got: {}", received);
-    // });
-
-
-    // let handle1 = thread::spawn(|| for i in 1..20 {
-    //     println!("{:?}", i);
-    // });
-
-    // let handle2 = thread::spawn(|| for i in 20..30 {
-    //     println!("{:?}", i);
-    // });
-    // handle1.join().unwrap();
-
-    // handle2.join().unwrap();
-    // get_data();
-    // use scron::Schedule;
-    // use chrono::Utc;
-    // use std::str::FromStr;
-    // let expression = "0/2 * * * * *";
-    // let schedule = Schedule::from_str(expression).unwrap();
-    // println!("Upcoming fire times:");
-    // for datetime in schedule.upcoming(Utc).take(20) {
-    //     println!("-> {}", datetime);
-    // }
-    // gitstar::models::create();
-    // gitstar::models::delete();
-    // gitstar::models::update();
-    // gitstar::models::read();
 }
 
 pub fn get_data() {
