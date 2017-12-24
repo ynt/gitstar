@@ -10,12 +10,12 @@ pub struct BaseInfo {
 }
 
 impl BaseInfo {
-    pub fn new(id: i64, repo_name: String, username: String, language: String) -> Self {
+    pub fn new(id: i64, repo_name: &str, username: &str, language: &str) -> Self {
         BaseInfo {
             id: id,
-            repo_name: repo_name.to_lowercase(),
-            username: username.to_lowercase(),
-            language: language.to_lowercase(),
+            repo_name: repo_name.to_owned(),
+            username: username.to_owned(),
+            language: language.to_owned(),
             ..Default::default()
         }
     }
@@ -67,7 +67,7 @@ impl BaseInfo {
         } else if self.username.is_empty() {
             Err(Error::new("BaseInfo feild username is empty".to_owned()))
         } else {
-            Ok(self.repo_name.clone() + "/" + &self.username)
+            Ok(self.repo_name.to_owned() + "/" + &self.username)
         }
     }
 }

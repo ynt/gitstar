@@ -218,8 +218,6 @@ impl<'a> Page2<'a> {
     }
 
     fn analyze_result(&mut self, url: &str) -> Result<Vec<RepoInfo>, Error> {
-        info!("fetch url: {}", url);
-
         // Send a get request, get serde_json::Value object/array
         let res = client::get(&url)?;
         let result = res.to_json()?;
@@ -288,7 +286,7 @@ fn create_repo_info(res: &Value) -> RepoInfo {
         repos_url: get_option_string(res["owner"]["repos_url"].as_str()),
         events_url: get_option_string(res["owner"]["events_url"].as_str()),
         received_events_url: get_option_string(res["owner"]["received_events_url"].as_str()),
-        user_type: get_option_string(res["owner"]["user_type"].as_str()),
+        user_type: get_option_string(res["owner"]["type"].as_str()),
         site_admin: get_option_bool(res["owner"]["site_admin"].as_bool()),
     };
 

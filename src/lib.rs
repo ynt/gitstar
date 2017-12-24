@@ -1,3 +1,4 @@
+#![recursion_limit = "128"]
 // logic
 pub mod client;
 
@@ -15,6 +16,8 @@ pub mod util;
 
 pub mod error;
 
+pub mod app;
+
 // use cate
 extern crate reqwest;
 
@@ -28,7 +31,6 @@ extern crate env_logger;
 extern crate diesel;
 // extern crate dotenv;
 
-#[macro_use]
 extern crate diesel_infer_schema;
 
 extern crate url;
