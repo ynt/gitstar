@@ -6,6 +6,8 @@ pub mod search_language;
 
 pub mod license;
 
+pub mod repo_base;
+
 use diesel::prelude::*;
 
 pub struct Connect {

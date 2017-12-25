@@ -42,7 +42,7 @@ pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) {
             conn.save(owners::table, &data);
 
         }
-        //
+        // exist return id, or insert and return id
         let l = &one.license;
         let license_id = License::find_id(&conn.db, &l.key, &l.name, &l.spdx_id, &l.url);
 

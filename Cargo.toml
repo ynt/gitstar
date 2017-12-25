@@ -1,7 +1,7 @@
 [package]
 name = "gitstar"
 version = "0.1.0"
-authors = ["周建刚 <zhoujg@weipaitang.com>"]
+authors = ["gladmo <mo@gladmo.com>"]
 
 [dependencies]
 # log = "0.3.8"
