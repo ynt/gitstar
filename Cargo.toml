@@ -18,6 +18,6 @@ regex = "0.2.3"
 scron = "~0.1.3"
 chrono = "0.4.0"
 
-diesel = { version = "1.0.0-beta1", features = ["postgres"] }
-diesel_infer_schema = { version = "1.0.0-beta1", features = ["postgres"] }
+diesel = { version = "1.0.0-rc1", features = ["postgres"] }
+diesel_infer_schema = { version = "1.0.0-rc1", features = ["postgres"] }
 dotenv = "0.9.0"

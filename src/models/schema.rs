@@ -22,3 +22,13 @@ table!{
         update_at -> Timestamp,
     }
 }
+
+table! {
+    license {
+        id -> Serial,
+        key -> Text,
+        name -> Text,
+        spdx_id -> Text,
+        url -> Text,
+    }
+}

@@ -40,7 +40,12 @@ pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) {
                 owner.site_admin,
             );
             conn.save(owners::table, &data);
-            println!("succ");
+
         }
+        //
+        let l = &one.license;
+        let license_id = License::find_id(&conn.db, &l.key, &l.name, &l.spdx_id, &l.url);
+
+        println!("succ. {}", license_id);
     }
 }
