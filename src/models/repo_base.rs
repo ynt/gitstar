@@ -18,3 +18,19 @@ pub struct NewRepoBase<'a> {
     pub lanauage: &'a str,
     pub insert_time: SystemTime,
 }
+
+#[derive(Queryable)]
+pub struct RepoBase {
+    pub id: i64,
+    pub license_id: i64,
+    pub owner_id: i64,
+    pub name: String,
+    pub full_name: String,
+    pub private: bool,
+    pub html_url: String,
+    pub description: String,
+    pub create_at: SystemTime,
+    pub homepage: String,
+    pub lanauage: String,
+    pub insert_time: SystemTime,
+}
