@@ -16,11 +16,11 @@ pub struct NewLicense<'a> {
 impl<'a> NewLicense<'a> {
     pub fn new(id: Option<i32>, key: &'a str, name: &'a str, spdx_id: &'a str, url: &'a str) -> Self {
         Self {
-            id: id,
-            key: key,
-            name: name,
-            spdx_id: spdx_id,
-            url: url,
+            id,
+            key,
+            name,
+            spdx_id,
+            url,
         }
     }
 }

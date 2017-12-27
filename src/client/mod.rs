@@ -39,6 +39,6 @@ pub fn get(url: &str) -> Result<Response, Error> {
 
     Ok(Response {
         body: resp.text()?,
-        header: header,
+        header,
     })
 }

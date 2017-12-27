@@ -18,9 +18,9 @@ impl<'a> NewSerchLanguage<'a> {
     pub fn new(id: Option<i32>, language: &'a str, status: bool) -> Self {
         let now = SystemTime::now();
         Self {
-            id: id,
-            language: language,
-            status: status,
+            id,
+            language,
+            status,
             publish_at: now,
             update_at: now,
         }

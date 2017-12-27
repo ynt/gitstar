@@ -16,7 +16,7 @@ pub struct Page {
     pub url: String,
     pub get_items: bool,
 
-    scrapy_once: bool,
+    crawl_once: bool,
     first_get: bool,
     current_page_size: i64,
 }
