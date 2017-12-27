@@ -57,7 +57,6 @@ pub fn get_data2() {
             }
         }
     }
-
 }
 
 pub fn get_data() {

@@ -19,7 +19,6 @@ pub fn search_by_language(conn: &Connect) {
             }
         }
     }
-
 }
 
 pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) {
@@ -40,7 +39,6 @@ pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) {
                 owner.site_admin,
             );
             conn.save(owners::table, &data);
-
         }
         // exist return id, or insert and return id
         let l = &one.license;
