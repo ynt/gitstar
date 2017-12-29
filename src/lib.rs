@@ -36,3 +36,5 @@ extern crate diesel_infer_schema;
 extern crate url;
 
 extern crate regex;
+
+extern crate chrono;

@@ -1,5 +1,6 @@
 use std::io;
 use reqwest;
+use chrono;
 
 #[derive(Debug)]
 pub enum Error {
@@ -7,6 +8,7 @@ pub enum Error {
     StdErr(io::Error),
     ParseErr(reqwest::UrlError),
     ReqwestErr(reqwest::Error),
+    ChroroErr(chrono::ParseError),
 }
 
 impl Error {
@@ -30,5 +32,11 @@ impl From<reqwest::UrlError> for Error {
 impl From<reqwest::Error> for Error {
     fn from(error: reqwest::Error) -> Self {
         Error::ReqwestErr(error)
+    }
+}
+
+impl From<chrono::ParseError> for Error {
+    fn from(error: chrono::ParseError) -> Self {
+        Error::ChroroErr(error)
     }
 }

@@ -6,7 +6,7 @@ use std::time::SystemTime;
 #[primary_key(id)]
 pub struct NewRepoBase<'a> {
     pub id: i64,
-    pub license_id: i64,
+    pub license_id: i32,
     pub owner_id: i64,
     pub name: &'a str,
     pub full_name: &'a str,
@@ -15,14 +15,14 @@ pub struct NewRepoBase<'a> {
     pub description: &'a str,
     pub create_at: SystemTime,
     pub homepage: &'a str,
-    pub lanauage: &'a str,
+    pub language: &'a str,
     pub insert_time: SystemTime,
 }
 
 #[derive(Queryable)]
 pub struct RepoBase {
     pub id: i64,
-    pub license_id: i64,
+    pub license_id: i32,
     pub owner_id: i64,
     pub name: String,
     pub full_name: String,
@@ -31,6 +31,6 @@ pub struct RepoBase {
     pub description: String,
     pub create_at: SystemTime,
     pub homepage: String,
-    pub lanauage: String,
+    pub language: String,
     pub insert_time: SystemTime,
 }

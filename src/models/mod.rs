@@ -8,18 +8,20 @@ pub mod license;
 
 pub mod repo_base;
 
+pub mod repo_info;
+
 use diesel::prelude::*;
-
-pub struct Connect {
-    pub db: PgConnection,
-}
-
 use std::fmt::Debug;
 
 use diesel;
 use diesel::pg::Pg;
 use diesel::insertable::{InsertValues, CanInsertInSingleQuery};
 use diesel::query_builder::QueryFragment;
+
+pub struct Connect {
+    pub db: PgConnection,
+}
+
 impl Connect {
     pub fn new(dsn: &str) -> Self {
         Connect { db: PgConnection::establish(dsn).expect(&format!("Error connecting to {}", dsn)) }

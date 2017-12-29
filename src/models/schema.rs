@@ -36,7 +36,7 @@ table! {
 table! {
     repo_base {
         id -> BigInt,
-        license_id -> BigInt,
+        license_id -> Integer,
         owner_id -> BigInt,
         name -> Text,
         full_name -> Text,
@@ -45,18 +45,18 @@ table! {
         description -> Text,
         create_at -> Timestamp,
         homepage -> Text,
-        lanauage -> Text,
+        language -> Text,
         insert_time -> Timestamp,
     }
 }
 
 table! {
-    repo_info {
+    repo_infos {
         id -> Serial,
         base_id -> BigInt,
-        license_id -> BigInt,
+        license_id -> Integer,
         owner_id -> BigInt,
-        insert_date -> Timestamp,
+        insert_date -> Text,
         size -> BigInt,
         stars -> Integer,
         forks -> Integer,

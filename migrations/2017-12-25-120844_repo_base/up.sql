@@ -9,6 +9,6 @@ CREATE TABLE repo_base (
 	description text,
 	create_at timestamp,
 	homepage text,
-	lanauage text,
+	language text,
 	insert_time timestamp
 );
