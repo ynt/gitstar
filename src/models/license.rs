@@ -14,7 +14,13 @@ pub struct NewLicense<'a> {
 }
 
 impl<'a> NewLicense<'a> {
-    pub fn new(id: Option<i32>, key: &'a str, name: &'a str, spdx_id: &'a str, url: &'a str) -> Self {
+    pub fn new(
+        id: Option<i32>,
+        key: &'a str,
+        name: &'a str,
+        spdx_id: &'a str,
+        url: &'a str,
+    ) -> Self {
         Self {
             id,
             key,
@@ -35,7 +41,13 @@ pub struct License {
 }
 
 impl License {
-    pub fn find_id(conn: &PgConnection, l_key: &str, l_name: &str, l_spdx_id: &str, l_url: &str) -> i32 {
+    pub fn find_id(
+        conn: &PgConnection,
+        l_key: &str,
+        l_name: &str,
+        l_spdx_id: &str,
+        l_url: &str,
+    ) -> i32 {
         use models::schema::license::dsl::*;
 
         let res = license
@@ -56,7 +68,13 @@ impl License {
         }
     }
 
-    fn insert_and_get_id(conn: &PgConnection, key: &str, name: &str, spdx_id: &str, url: &str) -> i32 {
+    fn insert_and_get_id(
+        conn: &PgConnection,
+        key: &str,
+        name: &str,
+        spdx_id: &str,
+        url: &str,
+    ) -> i32 {
         info!("license not find, insert");
 
         let data = NewLicense::new(None, key, name, spdx_id, url);

@@ -27,10 +27,9 @@ pub fn search_by_language(conn: &Connect) {
     }
 }
 
-
 pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) -> Result<(), Error> {
     let now = SystemTime::now();
-    let insert_date = &Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let insert_date = &Local::now().format("%Y-%m-%d").to_string();
 
     for one in &res {
         // save owner
@@ -59,44 +58,47 @@ pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) -> Result<(), Error> {
         let create_at = one.created_at.parse::<DateTime<Local>>()?;
         let create_at = SystemTime::from(create_at);
 
-        let base = repo_base::NewRepoBase {
-            id: base_info.id,
-            license_id,
-            owner_id: owner.id,
-            name: &base_info.repo_name,
-            full_name: &base_info.get_full_name()?,
-            private: one.private,
-            html_url: &one.html_url,
-            description: &one.description,
-            create_at: create_at,
-            homepage: &one.homepage,
-            language: &base_info.language,
-            insert_time: now,
-        };
-        conn.save(schema::repo_base::table, &base);
+        if !find_repo_base_by_id(&conn.db, base_info.id) {
+            let base = repo_base::NewRepoBase {
+                id: base_info.id,
+                license_id,
+                owner_id: owner.id,
+                name: &base_info.repo_name,
+                full_name: &base_info.get_full_name()?,
+                private: one.private,
+                html_url: &one.html_url,
+                description: &one.description,
+                create_at,
+                homepage: &one.homepage,
+                language: &base_info.language,
+                insert_time: now,
+            };
+            conn.save(schema::repo_base::table, &base);
+        }
 
         let updated_at = one.updated_at.parse::<DateTime<Local>>()?;
         let updated_at = SystemTime::from(updated_at);
-        let info = repo_info::NewRepoInfo {
-            id: None,
-            base_id: base_info.id,
-            license_id,
-            owner_id: owner.id,
-            insert_date: insert_date,
-            size: one.size,
-            stars: one.stargazers_count as i32,
-            forks: one.forks as i32,
-            issues: one.open_issues as i32,
-            language: &base_info.language,
-            updated_at: updated_at,
-            has_pages: one.has_pages,
-            has_wiki: one.has_wiki,
-            has_downloads: one.has_downloads,
-            has_issues: one.has_issues,
-            create_at: now,
-        };
-        conn.save(schema::repo_infos::table, &info);
-
+        if !repo_infos_is_insert(&conn.db, base_info.id, insert_date) {
+            let info = repo_info::NewRepoInfo {
+                id: None,
+                base_id: base_info.id,
+                license_id,
+                owner_id: owner.id,
+                insert_date,
+                size: one.size,
+                stars: one.stargazers_count as i32,
+                forks: one.forks as i32,
+                issues: one.open_issues as i32,
+                language: &base_info.language,
+                updated_at,
+                has_pages: one.has_pages,
+                has_wiki: one.has_wiki,
+                has_downloads: one.has_downloads,
+                has_issues: one.has_issues,
+                create_at: now,
+            };
+            conn.save(schema::repo_infos::table, &info);
+        }
         println!("succ. {}", license_id);
     }
 

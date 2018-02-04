@@ -20,7 +20,16 @@ pub struct NewOwner<'a> {
 }
 
 impl<'a> NewOwner<'a> {
-    pub fn new(id: i64, login: &'a str, avatar_url: &'a str, gravatar_id: &'a str, url: &'a str, html_url: &'a str, user_type: &'a str, site_admin: bool) -> Self {
+    pub fn new(
+        id: i64,
+        login: &'a str,
+        avatar_url: &'a str,
+        gravatar_id: &'a str,
+        url: &'a str,
+        html_url: &'a str,
+        user_type: &'a str,
+        site_admin: bool,
+    ) -> Self {
         let now = SystemTime::now();
         NewOwner {
             id,
@@ -55,9 +64,10 @@ pub struct Owner {
 pub fn find_owner_by_id(conn: &PgConnection, o_id: i64) -> Vec<Owner> {
     use models::schema::owners::dsl::*;
 
-    let results = owners.filter(id.eq(o_id)).load::<Owner>(conn).expect(
-        "Error loading posts",
-    );
+    let results = owners
+        .filter(id.eq(o_id))
+        .load::<Owner>(conn)
+        .expect("Error loading Owner");
 
     results
 }
@@ -66,9 +76,10 @@ pub fn read_and_output(db_connection: &PgConnection) {
     use models::schema::owners::dsl::*;
     use diesel::prelude::*;
 
-    let results = owners.limit(5).load::<Owner>(db_connection).expect(
-        "Error loading posts",
-    );
+    let results = owners
+        .limit(5)
+        .load::<Owner>(db_connection)
+        .expect("Error loading Owner");
 
     println!("Returned results: {}", results.len());
 

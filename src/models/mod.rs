@@ -15,7 +15,7 @@ use std::fmt::Debug;
 
 use diesel;
 use diesel::pg::Pg;
-use diesel::insertable::{InsertValues, CanInsertInSingleQuery};
+use diesel::insertable::{CanInsertInSingleQuery, InsertValues};
 use diesel::query_builder::QueryFragment;
 
 pub struct Connect {
@@ -24,7 +24,9 @@ pub struct Connect {
 
 impl Connect {
     pub fn new(dsn: &str) -> Self {
-        Connect { db: PgConnection::establish(dsn).expect(&format!("Error connecting to {}", dsn)) }
+        Connect {
+            db: PgConnection::establish(dsn).expect(&format!("Error connecting to {}", dsn)),
+        }
     }
 
     pub fn print<T>(data: &T)

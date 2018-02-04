@@ -23,9 +23,9 @@ extern crate reqwest;
 
 extern crate serde_json;
 
+extern crate env_logger;
 #[macro_use]
 extern crate log;
-extern crate env_logger;
 
 #[macro_use]
 extern crate diesel;
@@ -38,3 +38,5 @@ extern crate url;
 extern crate regex;
 
 extern crate chrono;
+
+extern crate rand;

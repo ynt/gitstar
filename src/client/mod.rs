@@ -3,8 +3,11 @@ use reqwest::header::Headers;
 use std::io;
 use serde_json;
 use serde_json::Value;
+use std::time::Duration;
 
 use super::error::Error;
+
+pub mod proxy_pool;
 
 pub struct Response {
     pub body: String,
@@ -13,9 +16,8 @@ pub struct Response {
 
 impl Response {
     pub fn to_json(&self) -> Result<Value, Error> {
-        let v: Value = serde_json::from_slice(self.body.as_bytes()).map_err(|e| {
-            io::Error::new(io::ErrorKind::Other, e)
-        })?;
+        let v: Value = serde_json::from_slice(self.body.as_bytes())
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
         Ok(v)
     }
 }
@@ -23,13 +25,14 @@ impl Response {
 pub fn get(url: &str) -> Result<Response, Error> {
     let target = reqwest::Url::parse("http://127.0.0.1:8001")?;
     let client = reqwest::Client::builder()
-        .proxy(reqwest::Proxy::custom(
-            move |url| if url.host_str() != Some("hyper.rs") {
+        .proxy(reqwest::Proxy::custom(move |url| {
+            if url.host_str() != Some("hyper.rs") {
                 Some(target.clone())
             } else {
                 None
-            },
-        ))
+            }
+        }))
+        .timeout(Some(Duration::from_secs(8)))
         .build()?;
 
     info!("fetch url: {}", url);

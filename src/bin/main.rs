@@ -1,18 +1,23 @@
 extern crate gitstar;
 extern crate regex;
 
+extern crate env_logger;
 #[macro_use]
 extern crate log;
-extern crate env_logger;
 
-extern crate scron;
 extern crate chrono;
+extern crate scron;
 
 use gitstar::prelude::*;
 
 use gitstar::repo::BaseInfo;
 
+use gitstar::client::proxy_pool;
 fn main() {
+    for _i in 0..5 {
+        println!("{:?}", proxy_pool::get_proxy());;
+    }
+    return;
     let dsn = "postgres://postgres:password666@localhost/gitstar";
     let conn = Connect::new(dsn);
     env_logger::init();
@@ -36,7 +41,6 @@ pub fn get_data2() {
 
     println!("{:?}", _page.get_url_list());
     let url_list = _page.get_url_list();
-
 
     if let Ok(res) = _page.get(&url_list[0]) {
         for one in &res {

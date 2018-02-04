@@ -1,6 +1,6 @@
 CREATE TABLE repo_base (
 	id int8 PRIMARY KEY,
-	license_id int8,
+	license_id int4,
 	owner_id int8,
 	name text,
 	full_name text,

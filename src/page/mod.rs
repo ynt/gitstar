@@ -25,7 +25,7 @@ impl Page {
     pub fn new(url: &str, page_size: i64) -> Self {
         Page {
             url: url.to_owned(),
-            page_size: page_size,
+            page_size,
 
             ..Default::default()
         }
@@ -128,11 +128,11 @@ impl<'a> Page2<'a> {
         }
 
         Page2 {
-            url: url,
-            page: page,
-            page_size: page_size,
+            url,
+            page,
+            page_size,
             first_fetch: true,
-            get_items: get_items,
+            get_items,
 
             ..Default::default()
         }
@@ -156,10 +156,8 @@ impl<'a> Page2<'a> {
             for pat in 1..self.max_page + 1 {
                 let mut u = url.clone();
                 u.query_pairs_mut().append_pair("page", &pat.to_string());
-                u.query_pairs_mut().append_pair(
-                    "per_page",
-                    &self.page_size.to_string(),
-                );
+                u.query_pairs_mut()
+                    .append_pair("per_page", &self.page_size.to_string());
                 list.push(u.as_str().to_string())
             }
         }
@@ -201,17 +199,13 @@ impl<'a> Page2<'a> {
         let mut url = Url::parse(self.url).unwrap();
 
         if self.page > 1 {
-            url.query_pairs_mut().append_pair(
-                "page",
-                &self.page.to_string(),
-            );
+            url.query_pairs_mut()
+                .append_pair("page", &self.page.to_string());
         }
 
         if self.page_size != 0 {
-            url.query_pairs_mut().append_pair(
-                "per_page",
-                &self.page_size.to_string(),
-            );
+            url.query_pairs_mut()
+                .append_pair("per_page", &self.page_size.to_string());
         }
 
         url.into_string()

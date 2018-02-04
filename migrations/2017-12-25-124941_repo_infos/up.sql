@@ -1,7 +1,7 @@
 CREATE TABLE repo_infos (
 	id SERIAL PRIMARY KEY,
 	base_id int8,
-	license_id int8,
+	license_id int4,
 	owner_id int8,
 	insert_date text,
 	size int8,

@@ -1,4 +1,5 @@
 use models::schema::*;
+use diesel::prelude::*;
 use std::time::SystemTime;
 
 #[derive(Insertable, Identifiable, Debug)]
@@ -33,4 +34,19 @@ pub struct RepoBase {
     pub homepage: String,
     pub language: String,
     pub insert_time: SystemTime,
+}
+
+pub fn find_repo_base_by_id(conn: &PgConnection, repo_id: i64) -> bool {
+    use models::schema::repo_base::dsl::*;
+
+    let res = repo_base
+        .filter(id.eq(repo_id))
+        .load::<RepoBase>(conn)
+        .expect("Error loading RepoBase");
+
+    if res.len() == 0 {
+        false
+    } else {
+        true
+    }
 }
