@@ -1,29 +1,39 @@
-use rand::{thread_rng, Rng};
 use reqwest;
 
-static mut PROXY_POOL: [&str; 30] = [""; 30];
+static mut PROXY_POOL: Option<Vec<String>> = None;
 
-pub fn get() -> (usize, &'static str) {
-    let proxy: &'static str = format!("{:?}", get_proxy());
+pub fn get() -> String {
     unsafe {
-        let index = thread_rng().gen_range(0, PROXY_POOL.len() - 1);
-        if PROXY_POOL[index] == "" {
-            PROXY_POOL[index] = proxy;
-        }
-
-        (index, PROXY_POOL[index])
-    }
-}
-
-pub fn del_proxy(index: usize) {
-    unsafe {
-        if index < PROXY_POOL.len() {
-            PROXY_POOL[index] = ""
+        match PROXY_POOL {
+            Some(ref mut proxy_vec) => proxy_vec.pop().unwrap(),
+            None => {
+                PROXY_POOL = Some(gen_proxy());
+                get_one_proxy()
+            }
         }
     }
 }
 
-pub fn get_proxy() -> String {
+pub fn put(proxy: String) {
+    unsafe {
+        match PROXY_POOL {
+            Some(ref mut proxy_vec) => proxy_vec.insert(0, proxy),
+            None => {
+                PROXY_POOL = Some(gen_proxy());
+            }
+        }
+    }
+}
+
+fn gen_proxy() -> Vec<String> {
+    let mut proxy_vec = Vec::new();
+    for _ in 0..10 {
+        proxy_vec.push(get_one_proxy());
+    }
+    proxy_vec
+}
+
+fn get_one_proxy() -> String {
     let mut res = reqwest::Client::builder()
         .build()
         .expect("err")

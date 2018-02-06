@@ -11,11 +11,17 @@ extern crate scron;
 use gitstar::prelude::*;
 
 use gitstar::repo::BaseInfo;
+use gitstar::client;
 
-use gitstar::client::proxy_pool;
 fn main() {
-    for _i in 0..5 {
-        println!("{:?}", proxy_pool::get_proxy());;
+    let res = client::get("http://baidu.com");
+    match res {
+        Ok(result) => {
+            println!("{:#?}", result.body);
+        }
+        Err(_) => {
+            println!("{:?}", "error");
+        }
     }
     return;
     let dsn = "postgres://postgres:password666@localhost/gitstar";
