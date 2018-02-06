@@ -73,7 +73,7 @@ impl Page {
         self.page = self.page + 1;
 
         // Send a get request, get serde_json::Value object/array
-        let res = client::get(&url)?;
+        let res = client::get(&url);
         let result = res.to_json()?;
 
         let header = res.header;
@@ -213,7 +213,7 @@ impl<'a> Page2<'a> {
 
     fn analyze_result(&mut self, url: &str) -> Result<Vec<RepoInfo>, Error> {
         // Send a get request, get serde_json::Value object/array
-        let res = client::get(&url)?;
+        let res = client::get(&url);
         let result = res.to_json()?;
         if self.first_fetch {
             let header = &res.header;

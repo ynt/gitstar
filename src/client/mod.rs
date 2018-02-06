@@ -2,7 +2,6 @@ use reqwest;
 use reqwest::header::Headers;
 use std::io;
 use serde_json;
-use url::Url;
 use serde_json::Value;
 use std::time::Duration;
 
@@ -23,33 +22,49 @@ impl Response {
     }
 }
 
-pub fn get(url: &str) -> Result<Response, Error> {
-    let proxy = proxy_pool::get();
-    let target = reqwest::Url::parse(&format!("http://{}", proxy))?;
-
-    match request(url, target) {
-        Ok(res) => Ok(res),
-        Err(Error::ReqwestErr(_)) => {
-            println!("{:?}", "reqwest err, contain timeout");
-            Err(Error::new("string".to_owned()))
+pub fn get(url: &str) -> Response {
+    let resp = request(url);
+    if let Err(Error::ReqwestErr(e)) = resp {
+        match e.get_ref().and_then(|e| e.downcast_ref::<io::Error>()) {
+            Some(err) => {
+                println!("{}, this is err line", err);
+                return get(url);
+            }
+            _ => {
+                println!("{:?}", "what?!");
+                Response {
+                    body: "".to_owned(),
+                    header: reqwest::header::Headers::new(),
+                }
+            }
         }
-        Err(error) => {
-            println!("{:?}", error);
-            Err(error)
+    } else {
+        match resp {
+            Ok(result) => result,
+            Err(e) => {
+                println!("{:?}", e);
+                Response {
+                    body: "".to_owned(),
+                    header: reqwest::header::Headers::new(),
+                }
+            }
         }
     }
 }
 
-fn request(url: &str, proxy: Url) -> Result<Response, Error> {
+fn request(url: &str) -> Result<Response, Error> {
+    let proxy = proxy_pool::get();
+    let target = reqwest::Url::parse(&format!("http://{}", proxy))?;
+
     let client = reqwest::Client::builder()
         .proxy(reqwest::Proxy::custom(move |url| {
             if url.host_str() != Some("2pm.me") {
-                Some(proxy.clone())
+                Some(target.clone())
             } else {
                 None
             }
         }))
-        .timeout(Some(Duration::from_secs(1)))
+        .timeout(Some(Duration::from_secs(8)))
         .build()?;
 
     info!("fetch url: {}", url);
@@ -57,6 +72,9 @@ fn request(url: &str, proxy: Url) -> Result<Response, Error> {
 
     let header = resp.headers().clone();
 
+    println!("{:?}", resp.status());
+    // put the proxy to the poll
+    proxy_pool::put(proxy);
     Ok(Response {
         body: resp.text()?,
         header,

@@ -17,6 +17,9 @@ pub use super::models::repo_base::*;
 pub use super::models::repo_info;
 pub use super::models::repo_info::*;
 
+// client
+pub use super::client::*;
+
 // page
 pub use super::page::Page;
 pub use super::page::Page2;
