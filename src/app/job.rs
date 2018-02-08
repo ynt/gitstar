@@ -4,6 +4,11 @@ use std::time::SystemTime;
 use chrono::prelude::*;
 use models::schema;
 
+// todo
+// 1. find owner repo
+// 2. find repo info
+//    1. not scarpy
+
 pub fn search_by_language(conn: &Connect) {
     // get all language
     let languages = SearchLanguage::get_all_language(&conn.db);
