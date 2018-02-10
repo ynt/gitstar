@@ -8,7 +8,6 @@ use models::schema;
 // 1. find owner repo
 // 2. find repo info
 //    1. not scarpy
-
 pub fn search_by_language(conn: &Connect) {
     // get all language
     let languages = SearchLanguage::get_all_language(&conn.db);
@@ -104,7 +103,6 @@ pub fn exec_result(conn: &Connect, res: Vec<RepoInfo>) -> Result<(), Error> {
             };
             conn.save(schema::repo_infos::table, &info);
         }
-        println!("succ. {}", license_id);
     }
 
     Ok(())
