@@ -31,8 +31,6 @@ extern crate log;
 extern crate diesel;
 // extern crate dotenv;
 
-extern crate diesel_infer_schema;
-
 extern crate url;
 
 extern crate regex;

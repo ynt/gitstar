@@ -20,5 +20,4 @@ scron = "~0.1.3"
 chrono = "0.4.0"
 
 diesel = { version = "1.1.1", features = ["postgres"] }
-diesel_infer_schema = { version = "~1.1.0", features = ["postgres"] }
 dotenv = "0.9.0"

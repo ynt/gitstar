@@ -1,7 +1,10 @@
 FROM gladmo/rust:latest as gitstar_bin
-RUN mkdir -p /app/gitstar
+RUN curl -o openssl.tar.gz https://www.openssl.org/source/openssl-1.0.2n.tar.gz && \
+	tar -zxvf openssl.tar.gz && cd openssl-1.0.2n && ./config --openssldir=/usr/local/openssl && \
+	mkdir -p /app/gitstar
 ADD . /app/gitstar
 WORKDIR /app/gitstar
+ENV OPENSSL_DIR /usr/local/openssl
 RUN cargo build --release --target x86_64-unknown-linux-musl
 
 FROM alpine:latest
